@@ -1,0 +1,3 @@
+lesoon_client>=0.0.1
+lesoon_common>=0.0.2
+lesoon_restful>=0.0.1

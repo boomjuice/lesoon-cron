@@ -1,0 +1,30 @@
+repos:
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.19.4
+    hooks:
+      - id: pyupgrade
+        args: [ "--py38-plus" ]
+  - repo: https://github.com/asottile/reorder_python_imports # 导包排序
+    rev: v2.5.0
+    hooks:
+      - id: reorder-python-imports
+        name: Reorder Python imports (src, tests)
+        args: [ "--application-directories", "src" ]
+  - repo: https://github.com/pre-commit/mirrors-yapf # 代码风格
+    rev: v0.31.0
+    hooks:
+      - id: yapf
+        name: Uniform Code Style
+        args: [-vv,-i]
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.0.1
+    hooks:
+      # removes UTF-8 byte order marker.
+      - id: fix-byte-order-marker
+      # Trims trailing whitespace.
+      - id: trailing-whitespace
+      # Makes sure files end in a newline and only a newline.
+      - id: end-of-file-fixer
+      - id: requirements-txt-fixer
+      - id: double-quote-string-fixer
+      - id: check-json
