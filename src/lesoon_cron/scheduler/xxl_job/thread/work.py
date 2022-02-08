@@ -36,11 +36,16 @@ class RegistryThread(threading.Thread):
 
     def run(self) -> None:
         while not self.stop_flag:
-            self.logger.info('正在进行XXL-JOB执行器注册...')
-            XxlJobHelper.client.registry(register_key=self.app_name,
-                                         register_value=self.registry_address)
-            self.logger.info('进行XXL-JOB执行器注册成功...')
-            time.sleep(self.beat_period)
+            try:
+                self.logger.info('正在进行XXL-JOB执行器注册...')
+                XxlJobHelper.client.registry(
+                    register_key=self.app_name,
+                    register_value=self.registry_address)
+                self.logger.info('进行XXL-JOB执行器注册成功...')
+            except Exception as e:
+                self.logger.error(f'注册XXL-JOB执行器发生异常:{e}')
+            finally:
+                time.sleep(self.beat_period)
 
         self.logger.info('正在移除XXL-JOB已注册执行器...')
         XxlJobHelper.client.remove_registry(

@@ -13,9 +13,10 @@ class XxlJobClient(BaseClient):
 
     def _decode_result(self, res):
         """解析请求结果."""
-        log_msg = {'url': res.url, 'data': res.json(), 'msg': ''}
+        log_msg = {'url': res.url, 'data': res.content, 'msg': ''}
         try:
             res = res.json()
+            log_msg['data'] = res
             if 'code' in res:
                 if res['code'] == 200:
                     self.log.info(f'XXL-JOB执行器调用成功:{log_msg}')

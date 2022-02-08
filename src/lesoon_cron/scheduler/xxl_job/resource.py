@@ -1,11 +1,11 @@
 import typing as t
 
 from lesoon_common import current_app
-from lesoon_common.model import CamelSchema
 from lesoon_common.model import fields
+from lesoon_common.schema import CamelSchema
 from lesoon_restful import use_args
 from lesoon_restful.resource import Resource
-from lesoon_restful.routes import Route
+from lesoon_restful.route import Route
 
 from lesoon_cron.scheduler.xxl_job.code import ResponseCode
 from lesoon_cron.scheduler.xxl_job.code import XxlJobStrategyCode

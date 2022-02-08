@@ -1,14 +1,9 @@
 import socket
-from datetime import datetime
 from functools import wraps
 
 from flask.ctx import AppContext
 from lesoon_common.dataclass.user import TokenUser
 from lesoon_common.globals import _app_ctx_stack
-from lesoon_common.model.alchemy.base import BaseModel
-from lesoon_common.wrappers import LesoonQuery
-from sqlalchemy import event
-from sqlalchemy.orm.query import BulkUpdate
 
 
 def context_inject(context: AppContext):
@@ -20,7 +15,7 @@ def context_inject(context: AppContext):
         def decorator(*args, **kwargs):
             with _context:
                 # 注入线程用户防止model写入报错
-                _app_ctx_stack.top.jwt_user = TokenUser.system_default()
+                _app_ctx_stack.top.jwt_user = TokenUser.new()
                 ret = fn(*args, **kwargs)
 
             return ret
