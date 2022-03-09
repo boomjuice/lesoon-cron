@@ -1,4 +1,4 @@
-filelock>=3.4.2
-lesoon_client>=0.0.1
-lesoon_common>=0.0.2
-lesoon_restful>=0.0.2
+filelock==3.6.0
+lesoon_client==0.0.2
+lesoon_common==0.0.3
+lesoon_restful==0.0.2

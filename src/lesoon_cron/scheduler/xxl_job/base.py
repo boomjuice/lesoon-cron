@@ -1,6 +1,10 @@
 import logging
+import os
+import random
+import time
 import typing as t
 
+import filelock
 from lesoon_common import LesoonFlask
 from lesoon_restful.api import Api
 
@@ -61,6 +65,13 @@ class XxlJob:
         registry_thread.start()
 
     def callback(self, app: LesoonFlask, config: dict):
+        """
+        注册xxl-job任务回调线程
+        Args:
+            app: lesoonFlask.app
+            config: xxl-job配置
+
+        """
         CallbackThread.callback_retry_period = config['CALLBACK_RETRY_PERIOD']
         callback_thread = CallbackThread()
         self.callback_thread = callback_thread
@@ -79,29 +90,26 @@ class XxlJob:
         for k, v in self._default_config().items():
             config.setdefault(k, v)
         # 注册xxl-job执行器
-        split_address, url_prefix = config['ADDRESS'].rsplit('/', 1), ''
-
-        if len(split_address) > 1:
-            xxl_job_address = split_address[1]
-            if xxl_job_address and ':' not in xxl_job_address:
-                url_prefix = xxl_job_address
-
         XxlJobHelper.client = XxlJobClient(base_url=config['ADDRESS'],
-                                           url_prefix=url_prefix,
                                            access_token=config['ACCESS_TOKEN'])
-
-        # 启动工作线程
-        self.logger.info(f'XXL-JOB 当前以{self.beat_period}s进行心跳注册,'
-                         f' 以{self.check_task_period}s进行任务状态检测.')
-
-        self.registry(app=app, config=config)
-        self.logger.info('XXL-JOB心跳注册线程启动完成.')
-
-        self.callback(app=app, config=config)
-        self.logger.info('XXL-JOB任务状态检测线程启动完成.')
-
         XxlJobLogger.log_dir_path = config['LOG_DIR_PATH']
         self.init_resource(app=app)
+
+        try:
+            with filelock.FileLock('xxl-job-register.lock', timeout=0):
+                # 启动工作线程
+                self.logger.info(f'XXL-JOB 当前以{self.beat_period}s进行心跳注册,'
+                                 f' 以{self.check_task_period}s进行任务状态检测.')
+
+                self.registry(app=app, config=config)
+                self.logger.info('XXL-JOB心跳注册线程启动完成.')
+
+                self.callback(app=app, config=config)
+                self.logger.info('XXL-JOB任务状态检测线程启动完成.')
+                if os.environ.get('gunicorn_flag', None):
+                    time.sleep(random.randint(20, 30))
+        except filelock.Timeout:
+            app.logger.info('XXL-JOB注册进程已存在....')
 
     def init_resource(self, app: LesoonFlask):
         # 注册xxl-job路由
