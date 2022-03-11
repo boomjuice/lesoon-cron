@@ -205,7 +205,7 @@ class JobThread(StoppableThread):
                             self.children.remove(f)
                     else:
                         # 直接调用
-                        self.handle_func(*args, *kwargs)
+                        self.handle_func(*args, **kwargs)
 
                     XxlJobHelper.log(
                         f'<br>----------- xxl-job job execute end(finish) -----------'
