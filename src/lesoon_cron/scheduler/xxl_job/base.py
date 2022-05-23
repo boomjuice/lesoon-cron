@@ -107,6 +107,7 @@ class XxlJob:
                 self.callback(app=app, config=config)
                 self.logger.info('XXL-JOB任务状态检测线程启动完成.')
                 if os.environ.get('gunicorn_flag', None):
+                    self.logger.info('以GUNICORN方式启动，进入短暂休眠防止重复注册.')
                     time.sleep(random.randint(20, 30))
         except filelock.Timeout:
             app.logger.info('XXL-JOB注册进程已存在....')
