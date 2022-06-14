@@ -3,7 +3,7 @@ from functools import wraps
 
 from flask.ctx import AppContext
 from lesoon_common.dataclass.user import TokenUser
-from lesoon_common.globals import _app_ctx_stack
+from lesoon_common.utils.jwt import set_current_user
 
 
 def context_inject(context: AppContext):
@@ -15,7 +15,7 @@ def context_inject(context: AppContext):
         def decorator(*args, **kwargs):
             with _context:
                 # 注入线程用户防止model写入报错
-                _app_ctx_stack.top.jwt_user = TokenUser.new()
+                set_current_user(TokenUser.new())
                 ret = fn(*args, **kwargs)
 
             return ret

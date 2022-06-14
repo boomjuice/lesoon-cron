@@ -1,4 +1,5 @@
 import typing as t
+import requests
 
 from lesoon_client import BaseClient
 
@@ -11,7 +12,13 @@ class XxlJobClient(BaseClient):
         super().__init__(*args, **kwargs)
         self.headers = {'XXL-JOB-ACCESS-TOKEN': access_token}
 
-    def _decode_result(self, res):
+    def _handle_result(
+        self,
+        res: requests.Response,
+        method: str,
+        request_url: str,
+        **kwargs,
+    ):
         """解析请求结果."""
         log_msg = {'url': res.url, 'data': res.content, 'msg': ''}
         try:
