@@ -94,6 +94,8 @@ class XxlJob:
                                            access_token=config['ACCESS_TOKEN'])
         XxlJobLogger.log_dir_path = config['LOG_DIR_PATH']
         self.init_resource(app=app)
+        self.callback(app=app, config=config)
+        self.logger.info('XXL-JOB任务状态检测线程启动完成.')
 
         try:
             with filelock.FileLock('xxl-job-register.lock', timeout=0):
@@ -104,8 +106,6 @@ class XxlJob:
                 self.registry(app=app, config=config)
                 self.logger.info('XXL-JOB心跳注册线程启动完成.')
 
-                self.callback(app=app, config=config)
-                self.logger.info('XXL-JOB任务状态检测线程启动完成.')
                 if os.environ.get('gunicorn_flag', None):
                     self.logger.info('以GUNICORN方式启动，进入短暂休眠防止重复注册.')
                     time.sleep(random.randint(20, 30))

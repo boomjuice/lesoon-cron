@@ -69,7 +69,7 @@ class CallbackThread(threading.Thread):
     @classmethod
     def push_callback(cls, param: CallbackParam):
         cls.callback_queue.put(param)
-        cls.logger.debug(f'回调参数{param}已入队，等待回调.')
+        cls.logger.info(f'回调参数{param}已入队，等待回调.')
 
     def _trigger_callback(self):
         try:
@@ -79,17 +79,14 @@ class CallbackThread(threading.Thread):
                 while self.callback_queue.qsize():
                     params.append(self.callback_queue.get_nowait())
                 XxlJobHelper.client.callback(params=params)
-                self.logger.debug(f'{params}调度任务结果回调完成')
+                self.logger.info(f'{params}调度任务结果回调完成')
         except Exception as e:
             self.logger.error(e)
 
-    def trigger_callback(self):
+    def run(self) -> None:
         while not self.stop_flag:
             self._trigger_callback()
         self._trigger_callback()
-
-    def run(self) -> None:
-        threading.Thread(target=self.trigger_callback).start()
 
 
 class JobThread(StoppableThread):
