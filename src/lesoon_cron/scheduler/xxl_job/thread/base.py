@@ -50,7 +50,7 @@ class StoppableThread(threading.Thread):
         """raises SystemExit in the context of the given thread, which should
         cause the thread to exit silently (unless caught)"""
         if self.is_alive():
-            self.raise_exc(InterruptedError)
+            self.raise_exc(SystemExit)
 
 
 class InheritableThread(StoppableThread):

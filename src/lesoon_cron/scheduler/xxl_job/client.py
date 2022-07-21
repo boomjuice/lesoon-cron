@@ -1,6 +1,6 @@
 import typing as t
-import requests
 
+import requests
 from lesoon_client import BaseClient
 
 from lesoon_cron.scheduler.xxl_job.dataclass import CallbackParam
@@ -22,18 +22,18 @@ class XxlJobClient(BaseClient):
         """解析请求结果."""
         log_msg = {'url': res.url, 'data': res.content, 'msg': ''}
         try:
-            res = res.json()
-            log_msg['data'] = res
-            if 'code' in res:
-                if res['code'] == 200:
+            res_json: dict = res.json()
+            log_msg['data'] = res_json  # type:ignore
+            if 'code' in res_json:
+                if res_json['code'] == 200:
                     self.log.info(f'XXL-JOB执行器调用成功:{log_msg}')
                 else:
-                    log_msg['msg'] = res['msg']
+                    log_msg['msg'] = res_json['msg']
                     self.log.error(f'XXL-JOB执行器调用失败:{log_msg}')
             else:
                 raise
         except Exception as e:
-            log_msg['msg'] = e
+            log_msg['msg'] = str(e)
             self.log.error(f'XXL-JOB调用发生未知异常:{log_msg}')
 
         return res

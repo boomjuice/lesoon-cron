@@ -1,4 +1,5 @@
 import io
+import logging
 import typing as t
 from datetime import datetime
 
@@ -7,12 +8,15 @@ from lesoon_cron.scheduler.xxl_job.code import ResponseCode
 from lesoon_cron.scheduler.xxl_job.context import XxlJobContext
 from lesoon_cron.scheduler.xxl_job.log import XxlJobLogger
 
+logger: logging.Logger = logging.getLogger('xxl-job-helper')
+
 
 class XxlJobHelper:
     client: t.Optional[XxlJobClient] = None
 
     @staticmethod
     def log(msg: str):
+        logging.info(msg)
         xxl_job_contex = XxlJobContext.get()
         if not xxl_job_contex:
             return False

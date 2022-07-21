@@ -159,7 +159,7 @@ class JobThread(StoppableThread):
                 try:
                     tp = self.trigger_queue.get(timeout=3)
                 except queue.Empty:
-                    pass
+                    continue
                 if tp:
                     self.running = True
                     self.idle_times = 0
